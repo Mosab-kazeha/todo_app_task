@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app_task/screen/list_todo_screen.dart';
+import 'package:todo_app_task/screen/category_todo_screen.dart';
 
 void main() {
   //WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ListTodoScreen(),
+      home: CategoryTodoScreen(),
     );
   }
 }

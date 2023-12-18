@@ -3,7 +3,7 @@ import 'package:todo_app_task/model/todo_model.dart';
 import 'package:todo_app_task/service/base_service.dart';
 
 abstract class TodoService extends BaseService {
-  /*Future<List<TodoModel>>*/ getAllTodo();
+  Future<List<TodoModel>> getAllTodo();
   Future<TodoModel> getOneTodo({required String id});
   createNewTodo({required TodoModel newTodo});
   updateOldTodo({required String id, required TodoModel newTodo});
@@ -24,12 +24,14 @@ class Todo extends TodoService {
   }
 
   @override
-  /* Future<List<TodoModel>>*/ getAllTodo() async {
-    print(" enter to getAllTodo ");
-    Response response =
-        await dio.get("https://657ec9263e3f5b18946421b8.mockapi.io/todo");
-    print(" get the response $response");
-    return response;
+  Future<List<TodoModel>> getAllTodo() async {
+    Response response = await dio.get(baseUrl);
+
+    dynamic temp = response.data;
+    List<TodoModel> result =
+        List.generate(temp.length, (index) => TodoModel.fromMap(temp[index]));
+
+    return result;
   }
 
   @override
@@ -38,7 +40,6 @@ class Todo extends TodoService {
     dynamic temp = response.data;
     TodoModel result = TodoModel.fromMap(temp.data[id]);
 
-    print("hi $result");
     return result;
   }
 
