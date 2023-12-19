@@ -7,20 +7,18 @@ abstract class TodoService extends BaseService {
   Future<TodoModel> getOneTodo({required String id});
   createNewTodo({required TodoModel newTodo});
   updateOldTodo({required String id, required TodoModel newTodo});
-  deleteTodo(String id);
+  deleteTodo({required String id});
 }
 
 class Todo extends TodoService {
   @override
-  createNewTodo({required TodoModel newTodo}) {
-    // TODO: implement createNewTodo
-    throw UnimplementedError();
+  createNewTodo({required TodoModel newTodo}) async {
+    Response response = await dio.put(baseUrl, data: newTodo.toJson());
   }
 
   @override
-  deleteTodo(String id) {
-    // TODO: implement deleteTodo
-    throw UnimplementedError();
+  deleteTodo({required String id}) async {
+    Response response = await dio.delete("$baseUrl/$id");
   }
 
   @override
@@ -38,14 +36,13 @@ class Todo extends TodoService {
   Future<TodoModel> getOneTodo({required String id}) async {
     Response response = await dio.get("$baseUrl/$id");
     dynamic temp = response.data;
-    TodoModel result = TodoModel.fromMap(temp.data[id]);
+    TodoModel result = TodoModel.fromMap(temp);
 
     return result;
   }
 
   @override
-  updateOldTodo({required String id, required TodoModel newTodo}) {
-    // TODO: implement updateOldTodo
-    throw UnimplementedError();
+  updateOldTodo({required String id, required TodoModel newTodo}) async {
+    Response response = await dio.put("$baseUrl/$id", data: newTodo.toJson());
   }
 }

@@ -11,8 +11,30 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: IconButton(
+        onPressed: () {},
+        icon: Icon(
+          Icons.add_circle_outline,
+          color: Color(0xFF8AA7B4),
+          size: 65,
+          weight: 5,
+        ),
+      ),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        title: Text('search'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () async {
+              /*dynamic titleOfTodo = await TitleTodo().GetAllTitleTodo();
+
+              showSearch(
+                context: context,
+                delegate: CustomSearch(allData: titleOfTodo),
+              );*/
+            },
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +75,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              child: TextField(
+              /*child: TextField(
                 decoration: InputDecoration(
                   hintText: "search",
                   hintStyle: TextStyle(
@@ -71,7 +93,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-              ),
+              ),*/
             ),
           ),
         ],
