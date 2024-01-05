@@ -12,6 +12,7 @@ abstract class TasksService extends BaseService {
       required String idTask,
       required TasksModel newTask});
   deleteTask({required String idTodo, required String idTask});
+  getAllTitleTasks({required String idTodo});
 }
 
 class Tasks extends TasksService {
@@ -29,10 +30,15 @@ class Tasks extends TasksService {
 
   @override
   Future<List<TasksModel>> getAllTasks({required String idTodo}) async {
+    print('try to get data');
+
     Response response = await dio.get("$baseUrl/$idTodo/$baseTaskUrl");
+
     dynamic temp = response.data;
+
     List<TasksModel> result =
         List.generate(temp.length, (index) => TasksModel.fromMap(temp[index]));
+    print("geting the data");
     return result;
   }
 
@@ -52,5 +58,17 @@ class Tasks extends TasksService {
       required TasksModel newTask}) async {
     Response response = await dio.put("$baseUrl/$idTodo/$baseTaskUrl/$idTask",
         data: newTask.toJson());
+  }
+
+  @override
+  getAllTitleTasks({required String idTodo}) async {
+    Response response = await dio.get("$baseUrl/$idTodo/$baseTaskUrl");
+    dynamic temp = response.data;
+    List<String> result = List.generate(
+      temp.length,
+      (index) => TasksModel.fromMap(temp[index]).taskTitle!,
+    );
+    print('hello $result');
+    return result.toList();
   }
 }

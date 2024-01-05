@@ -7,7 +7,8 @@ class TodoModel {
   int? deliveryTime;
   String? type;
   int? importance;
-  List<dynamic>? tasks;
+  String? id;
+  List<Task>? tasks;
 
   TodoModel({
     this.title,
@@ -16,6 +17,7 @@ class TodoModel {
     this.deliveryTime,
     this.type,
     this.importance,
+    this.id,
     this.tasks,
   });
 
@@ -26,7 +28,8 @@ class TodoModel {
     int? deliveryTime,
     String? type,
     int? importance,
-    List<dynamic>? tasks,
+    String? id,
+    List<Task>? tasks,
   }) =>
       TodoModel(
         title: title ?? this.title,
@@ -35,6 +38,7 @@ class TodoModel {
         deliveryTime: deliveryTime ?? this.deliveryTime,
         type: type ?? this.type,
         importance: importance ?? this.importance,
+        id: id ?? this.id,
         tasks: tasks ?? this.tasks,
       );
 
@@ -49,9 +53,10 @@ class TodoModel {
         deliveryTime: json["deliveryTime"],
         type: json["type"],
         importance: json["importance"],
+        id: json["id"],
         tasks: json["tasks"] == null
             ? []
-            : List<dynamic>.from(json["tasks"]!.map((x) => x)),
+            : List<Task>.from(json["tasks"]!.map((x) => Task.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -61,6 +66,54 @@ class TodoModel {
         "deliveryTime": deliveryTime,
         "type": type,
         "importance": importance,
-        "tasks": tasks == null ? [] : List<dynamic>.from(tasks!.map((x) => x)),
+        "id": id,
+        "tasks": tasks == null
+            ? []
+            : List<dynamic>.from(tasks!.map((x) => x.toMap())),
+      };
+}
+
+class Task {
+  bool? isComplete;
+  String? taskTitle;
+  String? id;
+  String? todoId;
+
+  Task({
+    this.isComplete,
+    this.taskTitle,
+    this.id,
+    this.todoId,
+  });
+
+  Task copyWith({
+    bool? isComplete,
+    String? taskTitle,
+    String? id,
+    String? todoId,
+  }) =>
+      Task(
+        isComplete: isComplete ?? this.isComplete,
+        taskTitle: taskTitle ?? this.taskTitle,
+        id: id ?? this.id,
+        todoId: todoId ?? this.todoId,
+      );
+
+  factory Task.fromJson(String str) => Task.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory Task.fromMap(Map<String, dynamic> json) => Task(
+        isComplete: json["isComplete"],
+        taskTitle: json["taskTitle"],
+        id: json["id"],
+        todoId: json["todoId"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "isComplete": isComplete,
+        "taskTitle": taskTitle,
+        "id": id,
+        "todoId": todoId,
       };
 }

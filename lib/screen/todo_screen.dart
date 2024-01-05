@@ -1,19 +1,120 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app_task/component/utility_component.dart';
 import 'package:todo_app_task/custom_search.dart';
 import 'package:todo_app_task/model/todo_model.dart';
-import 'package:todo_app_task/service/title_todo_service.dart';
 import 'package:todo_app_task/service/todo_service.dart';
 import 'tasks_screeen.dart';
 
-class CategoryTodoScreen extends StatelessWidget {
+class CategoryTodoScreen extends StatefulWidget {
   CategoryTodoScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CategoryTodoScreen> createState() => _CategoryTodoScreenState();
+}
+
+class _CategoryTodoScreenState extends State<CategoryTodoScreen>
+    with UtilityComponent {
+  TextEditingController titleTextController = TextEditingController();
+
+  late String taskId;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              isDismissible: false,
+              builder: (context) {
+                return Container(
+                  width: double.maxFinite,
+                  height: 208,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 317,
+                        height: 54,
+                        child: TextField(
+                          controller: titleTextController,
+                          decoration: InputDecoration(
+                              hintText: 'group name',
+                              hintStyle: TextStyle(
+                                color: Color(0xFF999999),
+                                fontSize: 18,
+                                fontFamily: 'Comfortaa',
+                                fontWeight: FontWeight.w300,
+                                height: 0,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              )),
+                        ),
+                        decoration: ShapeDecoration(
+                          color: Color(0xFFF5F4F4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            Todo().createNewTodo(
+                              newTodo: TodoModel(
+                                  title: titleTextController.text,
+                                  tasks: [],
+                                  deadLine: 1703333444,
+                                  dateCreated: 1703333444,
+                                  deliveryTime: 1,
+                                  type: "1",
+                                  importance: 1),
+                            );
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          width: 317,
+                          height: 54,
+                          child: Center(
+                            child: Text(
+                              'create task',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontFamily: 'Comfortaa',
+                                fontWeight: FontWeight.w400,
+                                height: 0,
+                              ),
+                            ),
+                          ),
+                          decoration: ShapeDecoration(
+                            color: Color(0xFF8AA7B4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(14),
+                        topRight: Radius.circular(14),
+                      ),
+                    ),
+                  ),
+                );
+              });
+        },
         icon: Icon(
           Icons.add_circle_outline,
           color: Color(0xFF8AA7B4),
@@ -27,11 +128,12 @@ class CategoryTodoScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
-              dynamic titleOfTodo = await TitleTodo().GetAllTitleTodo();
+              dynamic titleOfTodo = await Todo().getAllTitleTodo();
 
               showSearch(
                 context: context,
-                delegate: CustomSearch(allData: titleOfTodo),
+                delegate:
+                    CustomSearch(allData: titleOfTodo /*, taskId: taskId*/),
               );
             },
           ),
@@ -42,6 +144,7 @@ class CategoryTodoScreen extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<TodoModel> todo = snapshot.data!;
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -58,49 +161,6 @@ class CategoryTodoScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  /*Padding(
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 50),
-                    child: Container(
-                      width: 317 */ /* MediaQuery.of(context).size.width */ /*,
-                      height: 46,
-                      decoration: ShapeDecoration(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: TextField(
-                        controller: searchController,
-                        decoration: InputDecoration(
-                          hintText: "search",
-                          hintStyle: TextStyle(
-                            color: Color(0xFF999999),
-                            fontSize: 24,
-                            fontFamily: 'Comfortaa',
-                            fontWeight: FontWeight.w300,
-                            height: 0.82,
-                          ),
-                          prefix: Icon(
-                            Icons.search,
-                            color: Colors.grey,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            borderSide: const BorderSide(
-                              color: Colors.grey,
-                            ), // BorderSide
-                          ), // OutlineInputBorder
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            borderSide: const BorderSide(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),*/
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20, right: 20),
@@ -114,12 +174,15 @@ class CategoryTodoScreen extends StatelessWidget {
                           ),
                           itemCount: todo.length,
                           itemBuilder: (context, index) {
+                            taskId = todo[index].id.toString();
                             return InkWell(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => TasksScreen(),
+                                    builder: (context) => TasksScreen(
+                                      todoId: todo[index].id.toString(),
+                                    ),
                                   ),
                                 );
                               },
@@ -190,10 +253,23 @@ class CategoryTodoScreen extends StatelessWidget {
                   ),
                 ],
               );
-            } else {
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(
                   color: Color(0xFF8AA7B4),
+                ),
+              );
+            } else {
+              return Center(
+                child: Text(
+                  'There Is No Internet',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 34,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w600,
+                    height: 0,
+                  ),
                 ),
               );
             }

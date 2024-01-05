@@ -8,12 +8,13 @@ abstract class TodoService extends BaseService {
   createNewTodo({required TodoModel newTodo});
   updateOldTodo({required String id, required TodoModel newTodo});
   deleteTodo({required String id});
+  getAllTitleTodo();
 }
 
 class Todo extends TodoService {
   @override
   createNewTodo({required TodoModel newTodo}) async {
-    Response response = await dio.put(baseUrl, data: newTodo.toJson());
+    Response response = await dio.post(baseUrl, data: newTodo.toJson());
   }
 
   @override
@@ -44,5 +45,16 @@ class Todo extends TodoService {
   @override
   updateOldTodo({required String id, required TodoModel newTodo}) async {
     Response response = await dio.put("$baseUrl/$id", data: newTodo.toJson());
+  }
+
+  @override
+  getAllTitleTodo() async {
+    Response response = await dio.get("$baseUrl");
+    dynamic temp = response.data;
+    List<String> result = List.generate(
+      temp.length,
+      (index) => TodoModel.fromMap(temp[index]).title!,
+    );
+    return result.toList();
   }
 }

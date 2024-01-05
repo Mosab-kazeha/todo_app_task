@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:todo_app_task/screen/tasks_screeen.dart';
 
 class CustomSearch extends SearchDelegate {
-  CustomSearch({required this.allData});
+  CustomSearch({required this.allData /*, required this.taskId*/});
 
   List<String> allData;
+  /*String taskId;*/
 
   @override
   List<Widget>? buildActions(BuildContext context) {
@@ -41,8 +42,14 @@ class CustomSearch extends SearchDelegate {
           var result = matchQuery[index];
           return InkWell(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TasksScreen()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TasksScreen(
+                    todoId: (index + 1).toString(),
+                  ),
+                ),
+              );
             },
             child: ListTile(
               title: Text(result),
@@ -65,8 +72,12 @@ class CustomSearch extends SearchDelegate {
           var result = matchQuery[index];
           return InkWell(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TasksScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TasksScreen(
+                            todoId: (index + 1).toString(),
+                          )));
             },
             child: ListTile(
               title: Text(result),
